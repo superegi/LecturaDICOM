@@ -31,17 +31,7 @@ Thumbs.db
 .dropbox.attr
 EOF
 
-# 0.4 Requisitos del proyecto (desde tu venv)
-source ./venv/bin/activate
-pip freeze > requirements.txt
 
-# 0.5 README rápido
-cat > README.md << 'EOF'
-# LecturaDICOM
-Pequeño proyecto para lectura y prueba de DICOM en Python.
-- Activar entorno: `source ./venv/bin/activate`
-- Instalar deps: `pip install -r requirements.txt`
-EOF
 
 # 0.6 (Opcional) Normalizar fin de línea y tratar notebooks como binario
 cat > .gitattributes << 'EOF'
