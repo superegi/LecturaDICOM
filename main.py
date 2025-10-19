@@ -82,3 +82,103 @@ ax[3].axis(False)
 plt.show()
 
 
+# extraemos el centro y el tamaño de la imagen
+height, width = im1.shape[:2]
+centerX, centerY = (width // 2, height // 2)
+
+# obtenemos la matriz de rotacion
+M = cv2.getRotationMatrix2D((centerX, centerY), 45, 1.0)
+
+# rotamso la imagen
+im1_R = cv2.warpAffine(im1, M, (width, height))
+
+# mostramos la imagen
+fig, ax = plt.subplots(1,2,figsize=(20,8))
+ax[0].imshow(im1)
+ax[0].set_title('Original')
+ax[0].axis(False)
+ax[1].imshow(im1_R)
+ax[1].set_title('Imagen rotada')
+ax[1].axis(False)
+plt.show()
+
+# traslacion de una imagen
+# almacenamos el valor de la altura y el ancho de la imagen
+height, width = im1.shape[:2]
+quarter_height, quarter_width = height / 4, width / 4
+
+# construimos la matriz de traslación
+T = np.float32([[1, 0, quarter_width], [0, 1, quarter_height]])
+
+# Usamos la funcion warpAffine para trasladar la imagen
+img_translation = cv2.warpAffine(im1, T, (width, height))
+
+# mostramos la imagen
+fig, ax = plt.subplots(1,2,figsize=(20,8))
+ax[0].imshow(im1)
+ax[0].set_title('Original')
+ax[0].axis(False)
+ax[1].imshow(img_translation)
+ax[1].set_title('Iamgen trasladada')
+ax[1].axis(False)
+
+
+# cambiando el tamaño de la imagen
+resized_image = cv2.resize(im1, (240, 240), dst=None, fx=None, fy=None, interpolation=cv2.INTER_CUBIC)
+# mostramos la imagen
+fig, ax = plt.subplots(1,2,figsize=(20,8))
+ax[0].imshow(im1)
+ax[0].set_title('Original')
+ax[0].axis(False)
+ax[1].imshow(resized_image)
+ax[1].set_title('Imagen resize')
+ax[1].axis(False)
+
+
+
+# zoom in zoom outz
+zoom_factor = 0.5
+im1_resize = cv2.resize(im1, None, fx=zoom_factor, fy=zoom_factor, interpolation = cv2.INTER_LINEAR).astype(float)
+im1_resize[:,:,0] = (im1_resize[:,:,0]/np.amax(im1_resize[:,:,0]))*255.
+im1_resize[:,:,1] = (im1_resize[:,:,1]/np.amax(im1_resize[:,:,1]))*255.
+im1_resize[:,:,2] = (im1_resize[:,:,2]/np.amax(im1_resize[:,:,2]))*255.
+im1_resize = im1_resize.astype(np.uint8)
+
+difrows = im1.shape[0] - im1_resize.shape[0]
+difcol = im1.shape[1] - im1_resize.shape[1]
+if difrows<0:
+  difrows = abs(difrows)
+  difcol = abs(difcol)
+  im1_resize_zoom = im1_resize[difrows//2:im1_resize.shape[0]-difrows//2, difcol//2:im1_resize.shape[1]-difcol//2]
+else:
+  difrows = abs(difrows)
+  difcol = abs(difcol)
+  im1_resize_zoom = np.zeros_like(im1)
+  im1_resize_zoom[difrows//2:im1.shape[0]-difrows//2, difcol//2:im1.shape[1]-difcol//2,:] = im1_resize
+# mostramos la imagen
+fig, ax = plt.subplots(1,2,figsize=(20,8))
+ax[0].imshow(im1)
+ax[0].set_title('Original')
+ax[0].axis(False)
+ax[1].imshow(im1_resize_zoom)
+ax[1].set_title('Imagen zoom')
+ax[1].axis(False)
+plt.show()
+
+
+# podemos mostrar cada valor de intensidad en un grafico 3D.
+# donde los ejes corresponden a cada uno de los canales.
+R = resized_image[:,:,0].flatten()
+G = resized_image[:,:,1].flatten()
+B = resized_image[:,:,2].flatten()
+
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(10,10))
+ax.scatter(R, G, B)
+ax.set_xlabel('Red')
+ax.set_ylabel('Green')
+ax.set_zlabel('Blue')
+ax.view_init(30, 30, 0)
+plt.show()
+
+
+
